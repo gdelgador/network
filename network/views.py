@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, response
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -61,3 +61,18 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+def profile(request):
+
+    employee = {
+        'id': 123,
+        'name': 'Jhon',
+        'sal': 10000
+    }
+
+    data = User.objects.all();
+
+    response = {'users':list(data.values('username','email'))}
+
+    # return render(request, "network/profile.html")
+    return JsonResponse(response)
