@@ -1,6 +1,8 @@
 # network
 Project Network cs50w
 
+#### Install libraries
+    pip install -r requirements.txt
 
 ### Run migrations
     python manage.py makemigrations network

@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, respon
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Profile, Post, Like
 
 
 def index(request):
@@ -70,9 +70,18 @@ def profile(request):
         'sal': 10000
     }
 
-    data = User.objects.all();
+    # data = User.objects.all();
 
-    response = {'users':list(data.values('username','email'))}
+    # response = {'users':list(data.values('username','email'))}
+
+    return render(request, "network/profile.html")
+    # return JsonResponse(response)
+
+def followings(request):
+    
+    # data = User.objects.all();
+
+    # response = {'users':list(data.values('username','email'))}
 
     # return render(request, "network/profile.html")
-    return JsonResponse(response)
+    return render(request,'network/followings.html')
