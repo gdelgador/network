@@ -1,4 +1,10 @@
 {% extends "network/layout.html" %}
+{% load static %}
+
+
+{% block script %}
+    <script src="{% static 'network/network.js' %}"></script>
+{% endblock %}
 
 {% block body %}
     
@@ -6,13 +12,13 @@
 
     {% if user.is_authenticated %}
 
-        <div id="form" class="border border-primary">
+        <div id="compose-form" class="border border-primary">
             <h2>New Post</h2>
 
             <form action="" method="post">
                 {% csrf_token %}
                 <div class="form-group">
-                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                    <textarea class="form-control" id="tweetpost" rows="3"></textarea>
                 </div>
                 <input class="btn btn-primary" type="submit" value="Post">
             </form>
@@ -43,5 +49,8 @@
           </li>
         </ul>
     </nav>
+
+    <div id="list-posts">
+    </div>
 
 {% endblock %}

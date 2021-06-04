@@ -20,6 +20,14 @@ class Post(models.Model):
     def num_likes(self):
         return self.liked.all().count()
 
+    def serialize(self):
+
+        return {
+            'id': self.id,
+            'content': self.content,
+            'date': self.date
+        }
+
 
 class Like(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE)
