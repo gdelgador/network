@@ -18,6 +18,7 @@ class Post(models.Model):
 
     @property
     def num_likes(self):
+        
         return self.liked.all().count()
 
     def serialize(self):
