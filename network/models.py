@@ -18,7 +18,6 @@ class Post(models.Model):
 
     @property
     def num_likes(self):
-        
         return self.liked.all().count()
 
     def serialize(self):
@@ -26,7 +25,9 @@ class Post(models.Model):
         return {
             'id': self.id,
             'content': self.content,
-            'date': self.date
+            'date': self.date,
+            'username': self.user.username,
+            'likes': self.num_likes
         }
 
 

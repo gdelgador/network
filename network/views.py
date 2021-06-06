@@ -36,17 +36,39 @@ def compose(request):
 
 
 def posts(request):
-    # try:
-    #     posts = Post.objects.all()
-    #     return JsonResponse([post.serialize() for post in posts], safe=False)
-    # except:
-    #     return JsonResponse({"error": "Invalid mailbox."}, status=400)
-    
-    posts = Post.objects.all()
-    return JsonResponse([post.serialize() for post in posts], safe=False)
-    # return JsonResponse({"hola":"hola"})
 
+    posts = Post.objects.all()
+    posts = posts.order_by('-date').all()
+    return JsonResponse([post.serialize() for post in posts], safe=False)
+
+
+@csrf_exempt
+@login_required
+def compose(request):
+
+    # Composing a new post must be via POST
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
     
+    data = json.loads(request.body)
+
+    content = data.get('content',"")
+    if not content:
+        return JsonResponse({
+            "error": "Content required."
+        }, status=400)
+    
+    # Create post plus sender
+    post = Post(
+        content = content,
+        date = datetime.now,
+        user = request.username,
+        liked = 0
+    )
+    post.save
+
+
+    return JsonResponse({"message": "Post sent successfully."}, status=201)
 
 def login_view(request):
     if request.method == "POST":

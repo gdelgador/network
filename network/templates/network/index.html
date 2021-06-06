@@ -2,30 +2,26 @@
 {% load static %}
 
 
-{% block script %}
-    <script src="{% static 'network/network.js' %}"></script>
-{% endblock %}
-
 {% block body %}
     
     <h1>ALL POST</h1>
 
     {% if user.is_authenticated %}
 
-        <div id="compose-form" class="border border-primary">
+        <div class="border border-primary">
             <h2>New Post</h2>
 
-            <form action="" method="post">
+            <form id="compose-form">
                 {% csrf_token %}
                 <div class="form-group">
-                    <textarea class="form-control" id="tweetpost" rows="3"></textarea>
+                    <textarea class="form-control" id="compose-content" rows="3"></textarea>
                 </div>
                 <input class="btn btn-primary" type="submit" value="Post">
             </form>
         </div>
 
     {% endif %}
-
+    
     <div id="posts" class="border border-primary">
         <h2>Foo</h2>
         <a href="http://">Edit</a>
@@ -35,6 +31,8 @@
         <p>Comment</p>
 
     </div>
+
+    <div id="posts-view"></div>
 
     <nav id="pagination" aria-label="Page navigation example">
         <ul class="pagination justify-content-end">
@@ -50,7 +48,10 @@
         </ul>
     </nav>
 
-    <div id="list-posts">
-    </div>
+    
 
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/post.js' %}"></script>
 {% endblock %}
