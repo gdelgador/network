@@ -59,15 +59,11 @@ def compose(request):
         }, status=400)
     
     # Create post plus sender
-    post = Post(
+    post = Post.objects.create(
         content = content,
-        date = datetime.now,
-        user = request.username,
-        liked = 0
+        user = request.user
     )
-    post.save
-
-
+    post.save()
     return JsonResponse({"message": "Post sent successfully."}, status=201)
 
 def login_view(request):

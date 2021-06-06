@@ -14,7 +14,7 @@ function create_post() {
 
   // window.alert(content)
   // Send API
-  fetch('/emails', {
+  fetch('/compose', {
     method: 'POST',
     body: JSON.stringify({
         content: content

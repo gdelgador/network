@@ -25,8 +25,8 @@ class Post(models.Model):
         return {
             'id': self.id,
             'content': self.content,
-            'date': self.date,
             'username': self.user.username,
+            'date': self.date,
             'likes': self.num_likes
         }
 
