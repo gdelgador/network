@@ -1,9 +1,11 @@
 from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
+from django.core import paginator
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, response
 from django.shortcuts import render
 from django.urls import reverse
+from django.core.paginator import Paginator
 
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
@@ -14,9 +16,19 @@ from .models import User, Profile, Post, Like
 import json
 
 def index(request):
-
     # 1. load all posts
-    return render(request, "network/index.html")
+
+    posts = Post.objects.all()
+    posts = posts.order_by('-date').all()
+    paginator = Paginator(posts, 2)
+    
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, "network/index.html", {'page_obj': page_obj})
+
+def section(request,num):
+    page_number = request.GET.get('page')
+
 
 @csrf_exempt
 @login_required

@@ -3,10 +3,30 @@ document.addEventListener('DOMContentLoaded', function() {
     // document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
     
     document.querySelector('#compose-form').onsubmit = create_post;
-
+    // document.querySelector('button.page-link').addEventListener('click', () => load_mailbox('sent'));
+    
     // By default, load the posts
-    load_post();
+    // load_post();
+    document.querySelectorAll('button.page-link').forEach(button => {
+      button.onclick = function() {
+          const section = this.dataset.section;
+          history.pushState({section: section}, "", "");
+          showSection(section);
+      };
+    });
+});
+
+function showSection(section) {
+  fetch(`?page=${section}`)
+  .then(response => response.text())
+  .then(text => {
+    let text_new = text.querySelector('#posts')
+    console.log(text_new);
+    document.querySelector('body').innerHTML = text_new;
   });
+
+}
+
 
 function create_post() {
   // Content Form
@@ -29,6 +49,16 @@ function create_post() {
   location.reload();
 }
 
+
+
+
+
+
+
+
+
+
+// YA NO
 
 function load_post() {
     // document.querySelector('#posts-view').innerHTML = '<h1>hola</h1>';
