@@ -1,5 +1,5 @@
 {% extends "network/layout.html" %}
-{% load static %}
+<!-- {# load static #} -->
 
 
 {% block body %}
@@ -29,19 +29,21 @@
             <h2><a href="{% url 'profile' username=post.user %}">{{ post.user.username }}</a></h2>
             
             {% if post.user.username == user.username %}
-                <a href="#">Edit</a>
+                <a id="edit_post" href="#">Edit</a>
             {% endif %}
             <p>{{ post.content }}</p>
             <p>{{ post.date | date:'M, d, Y, H:i' }}</p>
             <p>
-                <button id="like" title="Love it" class="btn btn-counter" data-count="0">&#x2764;</button>
+                <button id="like_post" title="Love it" class="btn btn-counter" data-count="0">&#x2764;</button>
                 {{ post.num_likes }}
             </p>
                 
             <!-- <button id="comment" >Comment</button> -->
-            <button href="#" class="btn btn-secondary btn-lg disabled" role="button" aria-disabled="true">Comment</button>
+            <button id="comment_post" href="#" class="btn btn-secondary btn-lg disabled" role="button" aria-disabled="true">Comment</button>
     
         </div>
+    {% empty %}
+        <p>No posts to show</p>
     {% endfor %}
 
     <!-- <div id="posts-view"></div> -->
@@ -50,6 +52,3 @@
 
 {% endblock %}
 
-{% block script %}
-    <script src="{% static 'network/post.js' %}"></script>
-{% endblock %}

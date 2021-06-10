@@ -1,23 +1,42 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
 
     <!-- Profile -->
-    <div id='profile'>
-        <h1>{{ profile }}</h1>
-        <p>number of followers {{ totalfollowing }}</p>
-        <p>number of follows {{ totalfollower }}</p>
-        {% if user.is_authenticated == True %}
+    <div class="profile">
+        <img src="{%  static 'network/batman.png' %}">
+        <h2>{{ profile }}</h2>
+    
+        {% if user.is_authenticated %}
             {% if user.username != profile.username %}
-                {% if not followingEachOther %}
-                    <button class="Follow">Follow</button>
+                {% if followingEachOther %}
+                <button id="follow" class="follow-button">Follow</button>
                 {% else %}
-                    <button class="UnFollow">Unfollow</button>
+                <button id="follow" class="follow-button">Unfollow</button>
                 {% endif %}
             {% endif %}
         {% endif %}
+        
+        
     </div>
 
+    <!-- Follow items -->
+    <div class="follow">
+        <div>
+            <h5>Post</h5>
+            <p>{{ post_count }}</p>
+        </div>
+        <div>
+            <h5>Followers</h5>
+            <p>{{ totalfollowing }}</p>
+
+        </div>
+        <div>
+            <h5>Following</h5>
+            <p>{{ totalfollower }}</p>
+        </div>
+    </div>
 
     <!-- Posts -->
     <h2>Me Posts</h2>
@@ -33,4 +52,8 @@
         </div>
     {% endfor %}
 
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/follow.js' %}"></script>
 {% endblock %}

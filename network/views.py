@@ -44,38 +44,6 @@ def compose(request):
     post.save()
     return JsonResponse({"message": "Tweet was post successfully."}, status=201)
 
-
-def posts(request):
-
-    posts = Post.objects.all()
-    posts = posts.order_by('-date').all()
-    return JsonResponse([post.serialize() for post in posts], safe=False)
-
-
-@csrf_exempt
-@login_required
-def compose(request):
-
-    # Composing a new post must be via POST
-    if request.method != "POST":
-        return JsonResponse({"error": "POST request required."}, status=400)
-    
-    data = json.loads(request.body)
-
-    content = data.get('content',"")
-    if not content:
-        return JsonResponse({
-            "error": "Content required."
-        }, status=400)
-    
-    # Create post plus sender
-    post = Post.objects.create(
-        content = content,
-        user = request.user
-    )
-    post.save()
-    return JsonResponse({"message": "Post sent successfully."}, status=201)
-
 def login_view(request):
     if request.method == "POST":
 
@@ -153,7 +121,8 @@ def profile(request,username):
             'profile': profileuser,
             'totalfollower': totalfollower,
             'totalfollowing':totalfollowing,
-            'following_each_other':following_each_other
+            'following_each_other':following_each_other,
+            'post_count': len(posts)
             })
 
 def followings(request):
@@ -176,3 +145,68 @@ def followings(request):
     return render(request,'network/followings.html',{
         'page_obj':page_obj
     })
+
+# apis
+@csrf_exempt
+@login_required
+def like_post(request):
+    current_user = request.user
+
+    if request.method != 'POST':
+        return JsonResponse({"error": "POST request required."}, status=400)
+    
+    # print(request.body)
+    # print(request.GET['post_id'])
+    data = json.loads(request.body)
+    print(data)
+    post_id = data.get('post_id',"")
+    print(post_id)
+
+    if not post_id:
+        return JsonResponse({
+            "error": "post_id required."
+        }, status=400)
+    
+    likedpost = Post.objects.get(pk=post_id)
+    if current_user in likedpost.liked.all():
+        likedpost.liked.remove(current_user)
+        like = Like.objects.get(post=likedpost, user=current_user)
+        like.delete()
+    else:
+        like = Like.objects.get_or_create(post=likedpost, user=current_user)
+        likedpost.liked.add(current_user)
+        likedpost.save()
+
+    return JsonResponse({"message": "Post liked successfully."}, status=201)
+
+@csrf_exempt
+@login_required
+def compose(request):
+
+    # Composing a new post must be via POST
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+    
+    data = json.loads(request.body)
+
+    content = data.get('content',"")
+    if not content:
+        return JsonResponse({
+            "error": "Content required."
+        }, status=400)
+    
+    # Create post plus sender
+    post = Post.objects.create(
+        content = content,
+        user = request.user
+    )
+    post.save()
+    return JsonResponse({"message": "Post sent successfully."}, status=201)
+
+
+
+def posts(request):
+
+    posts = Post.objects.all()
+    posts = posts.order_by('-date').all()
+    return JsonResponse([post.serialize() for post in posts], safe=False)

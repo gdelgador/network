@@ -9,6 +9,7 @@
         <link href="{% static 'network/styles.css' %}" rel="stylesheet">
         
         {% block script %}
+        <script src="{% static 'network/post.js' %}"></script>
         {% endblock %}
     </head>
     <body>
@@ -46,8 +47,7 @@
           </nav>
         
         <div class="body">
-            {% block body %}
-            {% endblock %}
+            {% block body %}{% endblock %}
         </div>
 
         <!-- Pagination -->

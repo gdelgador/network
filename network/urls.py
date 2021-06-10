@@ -8,8 +8,10 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
-    path("profile/<str:username>", views.profile, name="profile"),
     path("followings", views.followings, name="followings"),
+    path("profile/<str:username>", views.profile, name="profile"),
+    path('posts', views.posts, name='posts'),
+    # Apis
     path('compose', views.compose, name="compose" ),
-    path('posts', views.posts, name='posts')
+    path('like',views.like_post, name="like")
 ]
