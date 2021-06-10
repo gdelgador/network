@@ -5,6 +5,7 @@
     <head>
         <title>{% block title %}Social Network{% endblock %}</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link href="{% static 'network/styles.css' %}" rel="stylesheet">
         
         {% block script %}
@@ -19,7 +20,7 @@
               <ul class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profile' %}"><strong>{{ user.username }}</strong></a>
+                        <a class="nav-link" href="{% url 'profile' username=user.username %}"><strong>{{ user.username }}</strong></a>
                     </li>
                 {% endif %}
                 <li class="nav-item">
@@ -54,10 +55,10 @@
             <ul class="pagination justify-content-end">
                 {% if page_obj.has_previous %}
                     <li class="page-item">
-                        <button class="page-link" data-section="1">First</button>
+                        <a class="page-link" href="?page=1">First</a>
                     </li>
                     <li class="page-item">
-                      <button class="page-link" data-section="{{ page_obj.previous_page_number }}">Previous</button>
+                      <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
                     </li>
                 {% endif %}
                 
@@ -67,10 +68,10 @@
                 
                 {% if page_obj.has_next %}
                     <li class="page-item">
-                      <button class="page-link" data-section="{{ page_obj.next_page_number }}">Next</button>
+                      <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
                     </li>
                     <li>
-                        <button class="page-link" data-section="{{ page_obj.paginator.num_pages }}">Last</button>
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
                     </li>
               {% endif %}
             </ul>

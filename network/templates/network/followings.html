@@ -4,4 +4,10 @@
 
     <h2>TODO followings</h2>
 
+    {% for post in page_obj %}
+        <p>{{ post.content }}</p>
+    {% empty %}
+        <p>No values</p>
+    {% endfor %}
+    
 {% endblock %}

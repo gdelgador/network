@@ -6,15 +6,15 @@
     
     <h1>ALL POST</h1>
 
+    <!-- Form Post -->
     {% if user.is_authenticated %}
 
         <div class="border border-primary">
             <h2>New Post</h2>
-
             <form id="compose-form">
                 {% csrf_token %}
                 <div class="form-group">
-                    <textarea class="form-control" id="compose-content" rows="3"></textarea>
+                    <textarea class="form-control" id="compose-content" rows="3" placeholder="What are you thinking about?"></textarea>
                 </div>
                 <input class="btn btn-primary" type="submit" value="Post">
             </form>
@@ -25,13 +25,21 @@
     <!-- Posts -->
     {% for post in page_obj %}
         {# Each "contact" is a Contact model object. #}
-        <div id="posts" class="border border-primary">
-            <h2>{{ post.user.username }}</h2>
-            <a href="http://">Edit</a>
+        <div id="posts" data-page="{{ post.id }}" class="border border-primary">
+            <h2><a href="{% url 'profile' username=post.user %}">{{ post.user.username }}</a></h2>
+            
+            {% if post.user.username == user.username %}
+                <a href="#">Edit</a>
+            {% endif %}
             <p>{{ post.content }}</p>
             <p>{{ post.date | date:'M, d, Y, H:i' }}</p>
-            <p>0</p>
-            <p>Comment</p>
+            <p>
+                <button id="like" title="Love it" class="btn btn-counter" data-count="0">&#x2764;</button>
+                {{ post.num_likes }}
+            </p>
+                
+            <!-- <button id="comment" >Comment</button> -->
+            <button href="#" class="btn btn-secondary btn-lg disabled" role="button" aria-disabled="true">Comment</button>
     
         </div>
     {% endfor %}

@@ -2,6 +2,35 @@
 
 {% block body %}
 
-    <h2>TODO</h2>
+    <!-- Profile -->
+    <div id='profile'>
+        <h1>{{ profile }}</h1>
+        <p>number of followers {{ totalfollowing }}</p>
+        <p>number of follows {{ totalfollower }}</p>
+        {% if user.is_authenticated == True %}
+            {% if user.username != profile.username %}
+                {% if not followingEachOther %}
+                    <button class="Follow">Follow</button>
+                {% else %}
+                    <button class="UnFollow">Unfollow</button>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    </div>
+
+
+    <!-- Posts -->
+    <h2>Me Posts</h2>
+    {% for post in page_obj %}
+        {# Each "contact" is a Contact model object. #}
+        <div id="posts" class="border border-primary">
+            <h2><a href="{% url 'profile' username=post.user %}">{{ post.user.username }}</a></h2>
+            <p><a href="http://">Edit</a></p>
+            <p>{{ post.content }}</p>
+            <p>{{ post.date | date:'M, d, Y, H:i' }}</p>
+            <p>{{ post.num_likes }}</p>
+            <button id="comment" >Comment</button>
+        </div>
+    {% endfor %}
 
 {% endblock %}

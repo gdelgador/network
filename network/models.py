@@ -29,6 +29,15 @@ class Post(models.Model):
             'date': self.date,
             'likes': self.num_likes
         }
+    
+    def __str__(self):
+        return {
+            'id': self.id,
+            'content': self.content,
+            'username': self.user.username,
+            'date': self.date,
+            'likes': self.num_likes
+        }
 
 
 class Like(models.Model):

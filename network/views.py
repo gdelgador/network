@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.core import paginator
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, response
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.core.paginator import Paginator
 
@@ -18,16 +18,14 @@ import json
 def index(request):
     # 1. load all posts
 
-    posts = Post.objects.all()
-    posts = posts.order_by('-date').all()
-    paginator = Paginator(posts, 2)
+    posts = Post.objects.all().order_by('-date').all()
+    paginator = Paginator(posts, 10)
     
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, "network/index.html", {'page_obj': page_obj})
-
-def section(request,num):
-    page_number = request.GET.get('page')
+    return render(request, "network/index.html", {
+        'page_obj': page_obj
+    })
 
 
 @csrf_exempt
@@ -129,26 +127,52 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
-def profile(request):
+def profile(request,username):
 
-    employee = {
-        'id': 123,
-        'name': 'Jhon',
-        'sal': 10000
-    }
+    if request.method == 'GET':
+        current_user = request.user
 
-    # data = User.objects.all();
+        profileuser = get_object_or_404(User, username=username)
+        follower = Profile.objects.filter(target=profileuser)
+        following = Profile.objects.filter(follower=profileuser)
 
-    # response = {'users':list(data.values('username','email'))}
+        posts = Post.objects.filter(user=profileuser).order_by('-date').all()
+        # posts = posts.order_by('-date').all()
 
-    return render(request, "network/profile.html")
-    # return JsonResponse(response)
+        following_each_other = Profile.objects.filter(follower=current_user, target=profileuser)
+        totalfollower = len(follower)
+        totalfollowing = len(following)
+
+        # paginator
+        paginator = Paginator(posts, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+    
+        return render(request, "network/profile.html",{
+            'page_obj':page_obj,
+            'profile': profileuser,
+            'totalfollower': totalfollower,
+            'totalfollowing':totalfollowing,
+            'following_each_other':following_each_other
+            })
 
 def followings(request):
-    
-    # data = User.objects.all();
+    current_user = request.user
+    follows = Profile.objects.filter(follower=current_user)
+    posts = Post.objects.all().order_by('-date')
+    posted = []
+    for p in posts:
+        for follower in follows:
+            if follower.target == p.user:
+                posted.append(p)
+                print(posted)
 
-    # response = {'users':list(data.values('username','email'))}
+    paginator = Paginator(posted, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
-    # return render(request, "network/profile.html")
-    return render(request,'network/followings.html')
+
+
+    return render(request,'network/followings.html',{
+        'page_obj':page_obj
+    })
