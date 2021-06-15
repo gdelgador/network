@@ -30,20 +30,10 @@ class Post(models.Model):
             'likes': self.num_likes
         }
     
-    def __str__(self):
-        return {
-            'id': self.id,
-            'content': self.content,
-            'username': self.user.username,
-            'date': self.date,
-            'likes': self.num_likes
-        }
 
 
 class Like(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE)
     post = models.ForeignKey('Post', on_delete=models.CASCADE)
 
-
-    def __str__(self):
-        return str(self.post)
+    

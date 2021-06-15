@@ -5,9 +5,24 @@
     <h2>TODO followings</h2>
 
     {% for post in page_obj %}
-        <p>{{ post.content }}</p>
+        {# Each "contact" is a Contact model object. #}
+        <div id="posts" data-page="{{ post.id }}" class="border border-primary">
+            <h2><a href="{% url 'profile' username=post.user %}">{{ post.user.username }}</a></h2>
+            
+            {% if post.user.username == user.username %}
+                <a id="edit_post" href="#">Edit</a>
+            {% endif %}
+            <p class="post-content">{{ post.content }}</p>
+            <p>{{ post.date | date:'M, d, Y, H:i' }}</p>
+            <p>
+                <button id="like_post" title="Love it" class="btn btn-counter" data-count="0">&#x2764;</button>
+                <span>{{ post.num_likes }}</span>
+            </p>
+            <!-- <button id="comment" >Comment</button> -->
+            <!-- <button id="comment_post" href="#" class="btn btn-secondary btn-lg disabled" role="button" aria-disabled="true">Comment</button> -->
+        </div>
     {% empty %}
-        <p>No values</p>
+        <p>No posts to show</p>
     {% endfor %}
     
 {% endblock %}

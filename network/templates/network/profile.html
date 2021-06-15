@@ -6,14 +6,14 @@
     <!-- Profile -->
     <div class="profile">
         <img src="{%  static 'network/batman.png' %}">
-        <h2>{{ profile }}</h2>
+        <h2 id="profile">{{ profile }}</h2>
     
         {% if user.is_authenticated %}
             {% if user.username != profile.username %}
-                {% if followingEachOther %}
-                <button id="follow" class="follow-button">Follow</button>
+                {% if following_each_other %}
+                    <button id="follow" class="follow-button">Unfollow</button>
                 {% else %}
-                <button id="follow" class="follow-button">Unfollow</button>
+                    <button id="follow" class="follow-button">Follow</button>
                 {% endif %}
             {% endif %}
         {% endif %}
@@ -42,18 +42,24 @@
     <h2>Me Posts</h2>
     {% for post in page_obj %}
         {# Each "contact" is a Contact model object. #}
-        <div id="posts" class="border border-primary">
+        <div id="posts" data-page="{{ post.id }}" class="border border-primary">
             <h2><a href="{% url 'profile' username=post.user %}">{{ post.user.username }}</a></h2>
-            <p><a href="http://">Edit</a></p>
-            <p>{{ post.content }}</p>
+            
+            {% if post.user.username == user.username %}
+                <a id="edit_post" href="#">Edit</a>
+            {% endif %}
+            <p class="post-content">{{ post.content }}</p>
             <p>{{ post.date | date:'M, d, Y, H:i' }}</p>
-            <p>{{ post.num_likes }}</p>
-            <button id="comment" >Comment</button>
+            <p>
+                <button id="like_post" title="Love it" class="btn btn-counter" data-count="0">&#x2764;</button>
+                <span>{{ post.num_likes }}</span>
+            </p>
+            <!-- <button id="comment" >Comment</button> -->
+            <!-- <button id="comment_post" href="#" class="btn btn-secondary btn-lg disabled" role="button" aria-disabled="true">Comment</button> -->
         </div>
+    {% empty %}
+        <p>No posts to show</p>
     {% endfor %}
 
 {% endblock %}
 
-{% block script %}
-    <script src="{% static 'network/follow.js' %}"></script>
-{% endblock %}

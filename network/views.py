@@ -95,6 +95,7 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
+@csrf_exempt
 def profile(request,username):
 
     if request.method == 'GET':
@@ -105,9 +106,12 @@ def profile(request,username):
         following = Profile.objects.filter(follower=profileuser)
 
         posts = Post.objects.filter(user=profileuser).order_by('-date').all()
-        # posts = posts.order_by('-date').all()
 
-        following_each_other = Profile.objects.filter(follower=current_user, target=profileuser)
+        try:
+            following_each_other = Profile.objects.filter(follower=current_user, target=profileuser)
+        except:
+            following_each_other = 0
+            pass
         totalfollower = len(follower)
         totalfollowing = len(following)
 
@@ -124,6 +128,22 @@ def profile(request,username):
             'following_each_other':following_each_other,
             'post_count': len(posts)
             })
+        
+    elif request.method == 'PUT':
+        profileuser = get_object_or_404(User, username=username)
+        currentuser = get_object_or_404(User, username=request.user)
+
+        following_each_other = Profile.objects.filter(follower=currentuser, target=profileuser)
+        # elimina
+        if not following_each_other:
+            follow = Profile.objects.create(target=profileuser, follower=currentuser)
+            follow.save()
+        else:
+            following_each_other.delete()
+
+        # print(f'each {len(following_each_other)}')
+        
+        return JsonResponse({"message": "Email sent successfully."}, status=201)
 
 def followings(request):
     current_user = request.user
@@ -134,7 +154,6 @@ def followings(request):
         for follower in follows:
             if follower.target == p.user:
                 posted.append(p)
-                print(posted)
 
     paginator = Paginator(posted, 10)
     page_number = request.GET.get('page')
@@ -155,12 +174,8 @@ def like_post(request):
     if request.method != 'POST':
         return JsonResponse({"error": "POST request required."}, status=400)
     
-    # print(request.body)
-    # print(request.GET['post_id'])
     data = json.loads(request.body)
-    print(data)
     post_id = data.get('post_id',"")
-    print(post_id)
 
     if not post_id:
         return JsonResponse({
@@ -177,7 +192,10 @@ def like_post(request):
         likedpost.liked.add(current_user)
         likedpost.save()
 
-    return JsonResponse({"message": "Post liked successfully."}, status=201)
+    return JsonResponse({
+        "message": "Post liked successfully.", 
+        "likes": likedpost.num_likes },
+        status=201)
 
 @csrf_exempt
 @login_required
@@ -205,8 +223,31 @@ def compose(request):
 
 
 
-def posts(request):
-
-    posts = Post.objects.all()
-    posts = posts.order_by('-date').all()
+def posts(request, id):
+    
+    # posts = Post.objects.all()
+    # posts = posts.order_by('-date').all()
+    posts = Post.objects.filter(id=id)
     return JsonResponse([post.serialize() for post in posts], safe=False)
+
+@csrf_exempt
+@login_required
+def edit_posts(request, id):
+
+    # Query for requested email
+    try:
+        post = Post.objects.get(user=request.user, pk=id)
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "Email not found."}, status=404)
+    
+    if request.method != 'PUT':
+        return JsonResponse({"error": "PUT request required."}, status=400)
+
+    data = json.loads(request.body)
+
+    data = json.loads(request.body)
+    if data.get("content") is not None:
+        post.content = data['content']
+    post.save()
+
+    return HttpResponse(status=204)

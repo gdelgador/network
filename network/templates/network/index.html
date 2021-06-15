@@ -31,16 +31,14 @@
             {% if post.user.username == user.username %}
                 <a id="edit_post" href="#">Edit</a>
             {% endif %}
-            <p>{{ post.content }}</p>
+            <p class="post-content">{{ post.content }}</p>
             <p>{{ post.date | date:'M, d, Y, H:i' }}</p>
             <p>
                 <button id="like_post" title="Love it" class="btn btn-counter" data-count="0">&#x2764;</button>
-                {{ post.num_likes }}
+                <span>{{ post.num_likes }}</span>
             </p>
-                
             <!-- <button id="comment" >Comment</button> -->
-            <button id="comment_post" href="#" class="btn btn-secondary btn-lg disabled" role="button" aria-disabled="true">Comment</button>
-    
+            <!-- <button id="comment_post" href="#" class="btn btn-secondary btn-lg disabled" role="button" aria-disabled="true">Comment</button> -->
         </div>
     {% empty %}
         <p>No posts to show</p>
